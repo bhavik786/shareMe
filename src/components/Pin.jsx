@@ -24,71 +24,15 @@ const Pin = ({ pin, getAllPin }) => {
     localStorage.getItem("user") !== "undefined"
       ? JSON.parse(localStorage.getItem("user"))
       : localStorage.clear();
+const deletePin = (id) => {
 
-  // const deletePin = (id) => {
-  //   return MySwal.fire({
-  //     title: "Are you sure?",
-  //     text: "Do you want to delete this record?",
-  //     icon: "warning",
-  //     showCancelButton: true,
-  //     confirmButtonText: "Yes, delete it!",
-  //     customClass: {
-  //       confirmButton: "btn btn-primary",
-  //       cancelButton: "btn btn-outline-danger ms-1",
-  //     },
-  //     buttonsStyling: false,
-  //   }).then(function () {
-  //     client.delete(id).then(() => {
-  //       MySwal.fire({
-  //         icon: "success",
-  //         title: "Deleted!",
-  //         text: "Your record has been deleted.",
-  //         customClass: {
-  //           confirmButton: "btn btn-success",
-  //         },
-  //       });
-  //       getAllPin();
-  //       // window.location.reload();
-  //     });
-  //   });
-  // };
+client.delete(id).then(() => {
+ getAllPin();
 
-  const deletePin = (id) => {
-    return MySwal.fire({
-      title: "Are you sure?",
-      text: "Do you want to delete this record?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-      customClass: {
-        confirmButton: "btn btn-primary",
-        cancelButton: "btn btn-outline-danger ms-1 ml-3",
-      },
-      buttonsStyling: false,
-    })
-      .then(function (result) {
-        if (result.value) {
-          client.delete(id).then(() => {
-            MySwal.fire({
-              icon: "success",
-              title: "Deleted!",
-              text: "Your record has been deleted.",
-              customClass: {
-                confirmButton: "btn btn-success",
-              },
             });
-            getAllPin();
-            // window.location.reload();
-          });
-        }
-      })
-      .catch(function (error) {
-        if (error.message == "Network Error") {
-          // Request made and server responded
-          history.push("/servererror");
-        }
-      });
-  };
+                     
+}
+
 
   let alreadySaved = pin?.save?.filter(
     (item) => item?.postedBy?._id === user?.googleId
