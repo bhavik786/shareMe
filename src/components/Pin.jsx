@@ -9,7 +9,6 @@ import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 
 import { client, urlFor } from "../client";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 const MySwal = withReactContent(Swal);
 const Pin = ({ pin, getAllPin }) => {
