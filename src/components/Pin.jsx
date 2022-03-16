@@ -1,13 +1,18 @@
+/*eslint-disable*/
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { MdDownloadForOffline } from "react-icons/md";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
 import { client, urlFor } from "../client";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-const Pin = ({ pin }) => {
+const MySwal = withReactContent(Swal);
+const Pin = ({ pin, getAllPin }) => {
   const [postHovered, setPostHovered] = useState(false);
   const [savingPost, setSavingPost] = useState(false);
 
@@ -20,10 +25,69 @@ const Pin = ({ pin }) => {
       ? JSON.parse(localStorage.getItem("user"))
       : localStorage.clear();
 
+  // const deletePin = (id) => {
+  //   return MySwal.fire({
+  //     title: "Are you sure?",
+  //     text: "Do you want to delete this record?",
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonText: "Yes, delete it!",
+  //     customClass: {
+  //       confirmButton: "btn btn-primary",
+  //       cancelButton: "btn btn-outline-danger ms-1",
+  //     },
+  //     buttonsStyling: false,
+  //   }).then(function () {
+  //     client.delete(id).then(() => {
+  //       MySwal.fire({
+  //         icon: "success",
+  //         title: "Deleted!",
+  //         text: "Your record has been deleted.",
+  //         customClass: {
+  //           confirmButton: "btn btn-success",
+  //         },
+  //       });
+  //       getAllPin();
+  //       // window.location.reload();
+  //     });
+  //   });
+  // };
+
   const deletePin = (id) => {
-    client.delete(id).then(() => {
-      window.location.reload();
-    });
+    return MySwal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this record?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      customClass: {
+        confirmButton: "btn btn-primary",
+        cancelButton: "btn btn-outline-danger ms-1 ml-3",
+      },
+      buttonsStyling: false,
+    })
+      .then(function (result) {
+        if (result.value) {
+          client.delete(id).then(() => {
+            MySwal.fire({
+              icon: "success",
+              title: "Deleted!",
+              text: "Your record has been deleted.",
+              customClass: {
+                confirmButton: "btn btn-success",
+              },
+            });
+            getAllPin();
+            // window.location.reload();
+          });
+        }
+      })
+      .catch(function (error) {
+        if (error.message == "Network Error") {
+          // Request made and server responded
+          history.push("/servererror");
+        }
+      });
   };
 
   let alreadySaved = pin?.save?.filter(

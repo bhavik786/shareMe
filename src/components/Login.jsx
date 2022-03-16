@@ -1,15 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import GoogleLogin from "react-google-login";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import shareVideo from "../assets/share.mp4";
 import logo from "../assets/logowhite.png";
+import Spinner from "./Spinner";
 
 import { client } from "../client";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const User =
+      localStorage.getItem("user") !== "undefined"
+        ? JSON.parse(localStorage.getItem("user"))
+        : localStorage.clear();
+
+    if (User) navigate("/");
+  }, []);
+
   const responseGoogle = (response) => {
+    setLoading(true);
     console.log("res", response);
     localStorage.setItem("user", JSON.stringify(response.profileObj));
     const { name, googleId, imageUrl } = response?.profileObj;
@@ -21,6 +33,7 @@ const Login = () => {
     };
     client.createIfNotExists(doc).then(() => {
       navigate("/", { replace: true });
+      setLoading(false);
     });
   };
 
@@ -43,22 +56,26 @@ const Login = () => {
           </div>
 
           <div className="shadow-2xl">
-            <GoogleLogin
-              clientId={`${process.env.REACT_APP_GOOGLE_API_TOKEN}`}
-              render={(renderProps) => (
-                <button
-                  type="button"
-                  className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none"
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                >
-                  <FcGoogle className="mr-4" /> Sign in with google
-                </button>
-              )}
-              onSuccess={responseGoogle}
-              onFailure={responseGoogle}
-              cookiePolicy="single_host_origin"
-            />
+            {loading ? (
+              <Spinner />
+            ) : (
+              <GoogleLogin
+                clientId={`${process.env.REACT_APP_GOOGLE_API_TOKEN}`}
+                render={(renderProps) => (
+                  <button
+                    type="button"
+                    className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none"
+                    onClick={renderProps.onClick}
+                    disabled={renderProps.disabled}
+                  >
+                    <FcGoogle className="mr-4" /> Sign in with google
+                  </button>
+                )}
+                onSuccess={responseGoogle}
+                onFailure={responseGoogle}
+                cookiePolicy="single_host_origin"
+              />
+            )}
           </div>
         </div>
       </div>

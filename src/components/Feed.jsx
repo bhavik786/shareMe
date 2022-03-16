@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
-import { client } from '../client';
-import { feedQuery, searchQuery } from '../utils/data';
-import MasonryLayout from './MasonryLayout';
-import Spinner from './Spinner';
+import { client } from "../client";
+import { feedQuery, searchQuery } from "../utils/data";
+import MasonryLayout from "./MasonryLayout";
+import Spinner from "./Spinner";
 
 const Feed = () => {
   const [pins, setPins] = useState();
@@ -12,6 +12,10 @@ const Feed = () => {
   const { categoryId } = useParams();
 
   useEffect(() => {
+    getAllPin();
+  }, [categoryId]);
+
+  const getAllPin = () => {
     if (categoryId) {
       setLoading(true);
       const query = searchQuery(categoryId);
@@ -27,8 +31,8 @@ const Feed = () => {
         setLoading(false);
       });
     }
-  }, [categoryId]);
-  const ideaName = categoryId || 'new';
+  };
+  const ideaName = categoryId || "new";
   if (loading) {
     return (
       <Spinner message={`We are adding ${ideaName} ideas to your feed!`} />
@@ -36,9 +40,7 @@ const Feed = () => {
   }
   return (
     <div>
-      {pins && (
-        <MasonryLayout pins={pins} />
-      )}
+      {pins && <MasonryLayout getAllPin={() => getAllPin()} pins={pins} />}
     </div>
   );
 };
